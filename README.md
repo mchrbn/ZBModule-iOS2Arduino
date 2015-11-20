@@ -6,4 +6,4 @@ Couldn't find some good documentation for it. So here is a working example of co
 
 ## Note
 
-If you have already an iOS project, you can simply add the Bluetooth class on your project.
+The app will connect directly to the BLE Shield and to the right characteristic where data can be written to. I only tested it on one BLE Shield from LinkSprite so not sure all the names are same. In case it doesn't work, get the name of your shield as well as its Read/Write characteristic from the LightBlue application.
