@@ -2,8 +2,7 @@
 //  Bluetooth.m
 //  BluetoothController
 //
-//  Created by Matthieu Cherubini on 20/11/2015.
-//  Copyright © 2015 Beach Creative. All rights reserved.
+//  Created by mchrbn on 20/11/2015.
 //
 
 #import "Bluetooth.h"
@@ -11,20 +10,22 @@
 @implementation Bluetooth
 @synthesize cbcManager;
 
+//Might have to change these values
 #define ARDUINO_SHIELD_NAME @"ZBModlue"
 #define SHIELD_RW_CHARACTERISTIC @"FFC1"
 
-
+//Init the Bluetooth Service
 -(void) start{
     cbcManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
 }
 
+//Call this method to send values over BLE
 -(void) sendValues:(NSString*)value{
     [self.peripheral writeValue:[value dataUsingEncoding:NSUTF8StringEncoding] forCharacteristic:self.characteristic type:CBCharacteristicWriteWithResponse];
     NSLog(@"Sent data %@ to %@", value, self.characteristic.UUID);
 }
 
-//Delegate showing discovered peripherals
+//Step #1 : Delegate showing discovered peripherals
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI {
     NSLog(@"%@",peripheral.name);
     //Connect the central manager to the peripheral (Arduino Shield)
@@ -38,7 +39,7 @@
 }
 
 
-//Delegate when a central manager successfully connected to a peripheral
+//Step #2 : Delegate when a central manager successfully connected to a peripheral
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral{
     NSString *log = [NSString stringWithFormat:@"Connecting to %@", peripheral.name];
     NSLog(@"%@",log);
@@ -49,13 +50,15 @@
 }
 
 
+//Step #3 : Delegate when a central manager start to look for services on a connected peripheral
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverServices:(NSError *)error{
     for (CBService *service in peripheral.services) {
         NSLog(@"Discovered service: %@", service.UUID);
         [peripheral discoverCharacteristics:nil forService:service];
     }}
 
-
+//Step #4 : Delegate when a central manager start to look for characteristic on a service
+//In the case of the ZBModule BLE Shield, the characteristic where values have to be sent is called FFC1
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error{
     for (CBCharacteristic *characteristic in service.characteristics) {
         if([characteristic.UUID.UUIDString isEqualToString:SHIELD_RW_CHARACTERISTIC]){

@@ -2,8 +2,7 @@
 //  ViewController.m
 //  BluetoothController
 //
-//  Created by Matthieu Cherubini on 16/11/2015.
-//  Copyright © 2015 Beach Creative. All rights reserved.
+//  Created by mchrbn on 20/11/2015.
 //
 
 #import "ViewController.h"
@@ -16,13 +15,15 @@
 
 
 -(IBAction)clickSend:(id)sender{
-    //NSLog(@"%@ - %@", _txtAngle1.text, _txtAngle2.text);
+    //Send string from text box when button is pressed
     NSString *rotation = [NSString stringWithFormat:@"%@#%@", _txtAngle1.text, _txtAngle2.text];
     [bluetooth sendValues:rotation];
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    //Init the bluetooth
     bluetooth = [[Bluetooth alloc] init];
     [bluetooth start];
 }

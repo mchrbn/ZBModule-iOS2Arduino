@@ -2,8 +2,7 @@
 //  Bluetooth.h
 //  BluetoothController
 //
-//  Created by Matthieu Cherubini on 20/11/2015.
-//  Copyright © 2015 Beach Creative. All rights reserved.
+//  Created by mchrbn on 20/11/2015.
 //
 
 #import <Foundation/Foundation.h>
