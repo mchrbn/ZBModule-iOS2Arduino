@@ -11,8 +11,9 @@
 @synthesize cbcManager;
 
 //Might have to change these values
-#define ARDUINO_SHIELD_NAME @"ZBModlue"
-#define SHIELD_RW_CHARACTERISTIC @"FFC1"
+#define ARDUINO_SHIELD_NAME @"ZBModlue"         //Name of the BLE shield
+#define SHIELD_WRITE_CHARACTERISTIC @"FFC1"     //Name of the write characteristic of the shield
+#define SHIELD_READ_CHARACTERISTIC @"FFC2"      //Name of the read characteristic of the shield
 
 //Init the Bluetooth Service
 -(void) start{
@@ -61,11 +62,23 @@
 //In the case of the ZBModule BLE Shield, the characteristic where values have to be sent is called FFC1
 - (void)peripheral:(CBPeripheral *)peripheral didDiscoverCharacteristicsForService:(CBService *)service error:(NSError *)error{
     for (CBCharacteristic *characteristic in service.characteristics) {
-        if([characteristic.UUID.UUIDString isEqualToString:SHIELD_RW_CHARACTERISTIC]){
-            [peripheral setNotifyValue:YES forCharacteristic:characteristic];
-            NSLog(@"Found %@ characteristic", SHIELD_RW_CHARACTERISTIC);
+        if([characteristic.UUID.UUIDString isEqualToString:SHIELD_WRITE_CHARACTERISTIC]){
+            NSLog(@"Found %@ characteristic (write)", SHIELD_WRITE_CHARACTERISTIC);
             self.characteristic = characteristic;
         }
+        else if([characteristic.UUID.UUIDString isEqualToString:SHIELD_READ_CHARACTERISTIC]){
+            NSLog(@"Found %@ characteristic (read)", SHIELD_READ_CHARACTERISTIC);
+            //Set notifications for that characteristic
+            [peripheral setNotifyValue:YES forCharacteristic:characteristic];
+        }
+    }
+}
+
+//Step #5: Read notifications from the characteristics (when a value is received)
+- (void)peripheral:(CBPeripheral *)peripheral didUpdateValueForCharacteristic:(CBCharacteristic *)characteristic error:(NSError *)error {
+    if (characteristic.value != nil) {
+        NSString *str = [[NSString alloc] initWithData:characteristic.value encoding:NSUTF8StringEncoding];
+        NSLog(@"Received value: %@", str);
     }
 }
 

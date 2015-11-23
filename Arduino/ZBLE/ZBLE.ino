@@ -10,8 +10,10 @@ void loop() {
 
 void serialEvent(){
   if(Serial.available() > 0){
+    //Read the value sent to the shield
     String v = Serial.readString();
-    Serial.println(v);
+    Serial.println(v); //This will send back the value to your phone and print it
+    //on the iOS console.
   }
 }
 
